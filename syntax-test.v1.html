@@ -1,0 +1,108 @@
+<template
+	bindable=""
+	role=""
+	replaceable
+	part=""
+	replace-part="">
+
+	<require
+		from=""
+		as=""
+		content="">
+	</require>
+
+	<router-view
+		name=""
+		layout-view=""
+		layout-view-model=""
+		swap-order="">
+	</router-view>
+
+	<compose
+		view-model=""
+		view=""
+		model.bind="">
+	</compose>
+
+	<input
+		attach-focus
+		model.bind=""
+		matcher.bind=""
+		attach-focus.bind=""/>
+
+	<select
+		attach-focus
+		model.bind=""
+		matcher.bind=""
+		attach-focus.bind="">
+	</select>
+
+	<let
+		to-binding-context
+		property=""
+		property.bind="">
+	</let>
+
+	<a
+		download=""
+		router-ignore=""
+		data-router-ignore=""
+		href.bind="">
+	</a>
+
+	<ux-dialog>
+		<ux-dialog-header></ux-dialog-header>
+		<ux-dialog-body></ux-dialog-body>
+		<ux-dialog-footer></ux-dialog-footer>
+	</ux-dialog>
+
+	<div
+		style="width: 1px; height: 1px;"
+		style='width: 1px; height: 1px;'
+
+		css="width: ${ test }px; height: ${ test }px;"
+		css='width: ${ test }px; height: ${ test }px;'
+
+		css="background-image: url('https://source.unsplash.com/random/${ w > 0 ? w : '50' }x${ h > 0 ? h : '50' }/?wallpapers');"
+		css='background-image: url("https://source.unsplash.com/random/${ w > 0 ? w : "50" }x${ h > 0 ? h : "50" }/?wallpapers");'
+
+		ref=""
+		element.ref=""
+		attribute-name.ref=""
+		view-model.ref=""
+		view.ref=""
+		controller.ref=""
+
+		property.bind=""
+		property.two-way=""
+		property.one-way=""
+		property.to-view=""
+		property.from-view=""
+		property.one-time=""
+		function.call=""
+
+		change.trigger=""
+		change.delegate=""
+		change.capture=""
+
+		repeat.for=""
+		virtual-repeat.for=""
+		infinite-scroll-next=""
+		infinite-scroll-next.call=""
+
+		else
+		if.bind=""
+		show.bind=""
+
+		with.bind=""
+		as-element=""
+		view-spy
+		compile-spy
+
+		t=""
+		i18n=""
+		data-src=""
+		t-params.bind="">
+		${ test }
+	</div>
+</template>

@@ -1,0 +1,18 @@
+{
+	"$schema": "sublime://packagecontrol.io/schemas/repository",
+	"schema_version": "4.0.0",
+	"packages": [
+		{
+			"name": "Aurelia",
+			"details": "https://github.com/LetsZiggy/sublime-aurelia",
+			"issues": "https://github.com/LetsZiggy/sublime-aurelia/issues",
+			"readme": "https://raw.githubusercontent.com/LetsZiggy/sublime-aurelia/main/README.md",
+			"releases": [
+				{
+					"sublime_text": ">=3000",
+					"tags": true
+				}
+			]
+		}
+	]
+}
