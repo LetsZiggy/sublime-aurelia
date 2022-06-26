@@ -1,0 +1,113 @@
+%YAML 1.2
+---
+name: Aurelia JavaScript v1
+scope: source.js.aurelia.v1
+version: 2
+extends: Packages/JavaScript/JavaScript.sublime-syntax
+file_extensions: [js,cjs,mjs]
+
+contexts:
+  main:
+    - meta_prepend: true
+
+  decorator:
+    - match: '@(?=inlineView)'
+      scope: punctuation.definition.annotation.js
+      push:
+        - decorator-meta
+        - decorator-expression-end
+        # - decorator-expression-begin
+        - decorator-expression-begin-au
+
+    - match: '@'
+      scope: punctuation.definition.annotation.js
+      push:
+        - decorator-meta
+        - decorator-expression-end
+        - decorator-expression-begin
+
+  decorator-expression-begin-au:
+    - include: decorator-name
+    - include: parenthesized-expression
+    - include: expression-begin-au
+
+  expression-begin-au:
+    - match: (?=inlineView\s*\()
+      scope: meta.function-call.js
+      set:
+        - function-call-arguments-au
+        - literal-variable
+
+    # - include: literal-string
+    - include: literal-string-au
+    # - include: literal-string-template
+    - include: literal-string-template-au
+
+    - include: literal-number
+    - include: prefix-operators
+
+    - include: else-pop
+
+  function-call-arguments-au:
+    - match: \(
+      scope: punctuation.section.group.begin.js
+      set:
+        - meta_scope: meta.group.js
+
+        - match: \)
+          scope: punctuation.section.group.end.js
+          pop: true
+
+        - include: expression-list-au
+
+  expression-list-au:
+    - include: expression-break
+    - include: comma-separator
+
+    - match: (?=\S)
+      push: expression-no-comma-au
+
+  expression-no-comma-au:
+    - meta_include_prototype: false
+
+    - match: ''
+      set:
+        - expression-end-no-comma
+        - expression-begin-au
+
+  literal-string-au:
+    - include: literal-double-quoted-string-au
+    - include: literal-single-quoted-string-au
+
+  literal-double-quoted-string-au:
+    - clear_scopes: true
+
+    - match: \"
+      scope: punctuation.definition.string.begin.js
+      embed: scope:text.html.aurelia.v1
+      embed_scope: text.html.aurelia.v1
+      escape: \"
+      escape_captures:
+        0: punctuation.definition.string.end.js
+
+  literal-single-quoted-string-au:
+    - clear_scopes: true
+
+    - match: \'
+      scope: punctuation.definition.string.begin.js
+      embed: scope:text.html.aurelia.v1
+      embed_scope: text.html.aurelia.v1
+      escape: \'
+      escape_captures:
+        0: punctuation.definition.string.end.js
+
+  literal-string-template-au:
+    - clear_scopes: true
+
+    - match: \`
+      scope: punctuation.definition.string.begin.js
+      embed: scope:text.html.aurelia.v1
+      embed_scope: text.html.aurelia.v1
+      escape: \`
+      escape_captures:
+        0: punctuation.definition.string.end.js
