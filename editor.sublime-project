@@ -25,6 +25,27 @@
 		/* "trim_trailing_white_space_on_save": "all", */
 		"use_tab_stops": true,
 		"word_wrap": true,
+
+		"project_syntaxes": [
+			{
+				"syntax": "Aurelia/aurelia-html-v1",
+				"rules": [
+					{ "globmatch": "**/*.v1.html" },
+				],
+			},
+			{
+				"syntax": "Aurelia/aurelia-javascript-v1",
+				"rules": [
+					{ "globmatch": "**/*.v1.js" },
+				],
+			},
+			{
+				"syntax": "Aurelia/aurelia-typescript-v1",
+				"rules": [
+					{ "globmatch": "**/*.v1.ts" },
+				],
+			},
+		],
 	},
 
 	"debugger_configurations": [],
