@@ -1,4 +1,4 @@
-# Aurelia Syntax Highlighting for Sublime Text
+# Aurelia Syntax Highlighting and Snippets for Sublime Text
 
 *Please note the plugin hasn't been submitted to [packagecontrol.io](https://packagecontrol.io/). Thus has to be installed manually.*
 
