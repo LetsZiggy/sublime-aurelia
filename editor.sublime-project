@@ -45,6 +45,24 @@
 					{ "globmatch": "**/*.v1.ts" },
 				],
 			},
+			{
+				"syntax": "Aurelia/aurelia-html-v2",
+				"rules": [
+					{ "globmatch": "**/*.v2.html" },
+				],
+			},
+			{
+				"syntax": "Aurelia/aurelia-javascript-v2",
+				"rules": [
+					{ "globmatch": "**/*.v2.js" },
+				],
+			},
+			{
+				"syntax": "Aurelia/aurelia-typescript-v2",
+				"rules": [
+					{ "globmatch": "**/*.v2.ts" },
+				],
+			},
 		],
 	},
 
