@@ -4,3 +4,6 @@ syntax-test.html export-ignore
 syntax-test.v1.html export-ignore
 syntax-test.v1.js export-ignore
 syntax-test.v1.ts export-ignore
+syntax-test.v2.html export-ignore
+syntax-test.v2.js export-ignore
+syntax-test.v2.ts export-ignore

@@ -31,6 +31,10 @@ The syntax group is listed as `Aurelia` in Sublime syntax selection list.
 	- `Aurelia > Aurelia HTML v1` for `.html` files
 	- `Aurelia > Aurelia JavaScript v1` for `.js` files with `@inlineView` template syntax highlighting
 	- `Aurelia > Aurelia TypeScript v1` for `.ts` files with `@inlineView` template syntax highlighting
+- v2
+	- `Aurelia > Aurelia HTML v2` for `.html` files
+	- `Aurelia > Aurelia JavaScript v2` for `.js` files with `@customElement` template syntax highlighting
+	- `Aurelia > Aurelia TypeScript v2` for `.ts` files with `@customElement` template syntax highlighting
 
 [ApplySyntax](https://github.com/facelessuser/ApplySyntax):
 1. `Project: Edit Project`
@@ -62,6 +66,33 @@ The syntax group is listed as `Aurelia` in Sublime syntax selection list.
 			},
 		}
 		```
+	- v2
+		```javascript
+		{
+			"settings": {
+				"project_syntaxes": [
+					{
+						"syntax": "Aurelia/aurelia-html-v2",
+						"rules": [
+							{ "globmatch": "**/*.html" },
+						],
+					},
+					{
+						"syntax": "Aurelia/aurelia-javascript-v2",
+						"rules": [
+							{ "globmatch": "**/*.js" },
+						],
+					},
+					{
+						"syntax": "Aurelia/aurelia-typescript-v2",
+						"rules": [
+							{ "globmatch": "**/*.ts" },
+						],
+					},
+				],
+			},
+		}
+		```
 Manually:
 
 1. Open `Command Palette`
@@ -73,6 +104,13 @@ Manually:
 			- `Set Syntax: Aurelia JavaScript v1`
 		- `.ts`
 			- `Set Syntax: Aurelia TypeScript v1`
+	- v2
+		- `.html`
+			- `Set Syntax: Aurelia HTML v2`
+		- `.js`
+			- `Set Syntax: Aurelia JavaScript v2`
+		- `.ts`
+			- `Set Syntax: Aurelia TypeScript v2`
 
 ## LSP compatibility
 
@@ -84,20 +122,23 @@ Manually:
 		"text.html.aurelia.v1": "html",
 		"source.js.aurelia.v1": "javascript",
 		"source.ts.aurelia.v1": "typescript",
+		"text.html.aurelia.v2": "html",
+		"source.js.aurelia.v2": "javascript",
+		"source.ts.aurelia.v2": "typescript",
 	}
 	```
 3. LSP client `selector`|`languages` option in `.sublime-settings`|`.sublime-project`
 	- Sublime Text 4
 		```javascript
-		"selector": "... | text.html.aurelia.v1",
+		"selector": "... | text.html.aurelia.v1 | text.html.aurelia.v2",
 
 		/* --- --- --- --- --- */
 
-		"selector": "... | source.js.aurelia.v1",
+		"selector": "... | source.js.aurelia.v1 | source.js.aurelia.v2",
 
 		/* --- --- --- --- --- */
 
-		"selector": "... | source.ts.aurelia.v1",
+		"selector": "... | source.ts.aurelia.v1 | source.ts.aurelia.v2",
 		```
 	- Sublime Text 3
 		```javascript
@@ -106,9 +147,11 @@ Manually:
 				"languageId": "html",
 				"scopes": [
 					"source.html.aurelia.v1",
+					"source.html.aurelia.v2",
 				],
 				"syntaxes": [
 					"Packages/Aurelia/aurelia-html-v1.sublime-syntax",
+					"Packages/Aurelia/aurelia-html-v2.sublime-syntax",
 				],
 			}
 		],
@@ -120,9 +163,11 @@ Manually:
 				"languageId": "javascript",
 				"scopes": [
 					"source.js.aurelia.v1",
+					"source.js.aurelia.v2",
 				],
 				"syntaxes": [
 					"Packages/Aurelia/aurelia-javascript-v1.sublime-syntax",
+					"Packages/Aurelia/aurelia-javascript-v2.sublime-syntax",
 				],
 			}
 		],
@@ -134,9 +179,11 @@ Manually:
 				"languageId": "typescript",
 				"scopes": [
 					"source.ts.aurelia.v1",
+					"source.ts.aurelia.v2",
 				],
 				"syntaxes": [
 					"Packages/Aurelia/aurelia-typescript-v1.sublime-syntax",
+					"Packages/Aurelia/aurelia-typescript-v2.sublime-syntax",
 				],
 			}
 		],
@@ -144,23 +191,29 @@ Manually:
 
 ## Limitations
 
-- For `@inlineView` template syntax highlighting, escaped inner quotes won't work
+- For `@inlineView`|`@customElement` template syntax highlighting, escaped inner quotes won't work
 ```javascript
 /* example */
 // double quotes
 @inlineView("<template><div class=\"\"></div></template>")
 //                                ^^^^ this doesn't work
+@customElement({ template: "<div class=\"\"></div>" })
+//                                     ^^^^ this doesn't work
 
 // single quotes
 @inlineView('<template><div class=\'\'></div></template>')
 //                                ^^^^ this doesn't work
+@customElement({ template: '<div class=\'\'></div>' })
+//                                     ^^^^ this doesn't work
 
 // backtick quotes
 @inlineView(`<template><div class=\`\`></div></template>`)
 //                                ^^^^ this doesn't work
+@customElement({ template: `<div class=\`\`></div>` })
+//                                     ^^^^ this doesn't work
 ```
 
-- For `@inlineView` template syntax highlighting, interpolation with backtick quotes must be escaped
+- For `@inlineView`|`@customElement` template syntax highlighting, interpolation with backtick quotes must be escaped
 ```javascript
 /* example */
 // backtick quotes
@@ -172,6 +225,14 @@ Manually:
 	</div>
 </template>
 `)
+@customElement({
+	template: `<template>
+	<div>
+		\${ test }
+		^^ dollar sign must be escaped
+	</div>
+</template>`
+})
 ```
 
 ## Development

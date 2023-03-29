@@ -1,0 +1,602 @@
+%YAML 1.2
+---
+name: Aurelia HTML v2
+scope: text.html.aurelia.v2
+version: 2
+extends: Packages/HTML/HTML.sublime-syntax
+file_extensions: [html]
+
+variables:
+  au_binding_type: \b(?ix:bind|two-way|one-way|to-view|from-view|one-time)\b
+  au_dom_event_attribute: \b(?ix:abort|autocomplete|autocompleteerror|auxclick|blur|cancel|canplay|canplaythrough|change|click|close|contextmenu|copy|cuechange|dblclick|drag|dragend|dragenter|dragexit|dragleave|dragover|dragstart|drop|durationchange|emptied|ended|error|focus|focusin|focusout|input|invalid|keydown|keypress|keyup|load|loadeddata|loadedmetadata|loadstart|mousedown|mouseenter|mouseleave|mousemove|mouseout|mouseover|mouseup|mousewheel|paste|pause|play|playing|progress|ratechange|reset|resize|scroll|seeked|seeking|select|show|sort|stalled|submit|suspend|timeupdate|toggle|volumechange|waiting)\b
+
+  # https://github.com/aurelia/aurelia/pull/1586
+  # \b(?ix:call)\b
+
+  ###-Not implemented-###
+  # au_contextual_property: \b(?ix:\$event|\$index|\$first|\$last|\$even|\$odd|\$length|\$parent|$host|\$this|$attrs|$dialog)\b
+  # au_binding_behaviour: \b(?ix:throttle|debounce|updateTrigger|signal|oneTime|toView|twoWay|self)\b
+
+  # https://github.com/aurelia/aurelia/blob/master/packages/ui-virtualization/Note.md?plain=1#L72
+  # \b(?ix:\$middle)\b
+
+contexts:
+  main:
+    - meta_prepend: true
+    - include: interpolation
+
+  interpolation:
+    - clear_scopes: true
+
+    - match: \\?\$\{
+      scope: punctuation.section.interpolation.begin.js source.js.embedded.html meta.interpolation.js meta.string.interpolation
+      embed: scope:source.js#string-interpolations
+      embed_scope: source.js.embedded.html meta.interpolation.js meta.string.interpolation
+      escape: \}
+      escape_captures:
+        0: punctuation.section.interpolation.end.js source.js.embedded.html meta.interpolation.js meta.string.interpolation
+
+  ###[ TAGS ]###
+
+  tag:
+    - meta_prepend: true
+    - include: au_tag_let
+    - include: au_tag_template
+    - include: au_tag_form
+    - include: au_tag_slot
+    - include: au_tag_bindable
+    - include: au_tag_import
+    - include: au_tag_containerless
+    - include: au_tag_capture
+    - include: au_tag_compose
+    - include: au_tag_a
+    - include: au_tag_viewport
+    - include: au_tag_validation
+    - include: au_tag_dialog
+
+  au_tag_let:
+    - match: '(<\/?)(\b(?ix:let)\b){{tag_name_break}}'
+      captures:
+        1: punctuation.definition.tag.begin.html
+        2: entity.name.tag.other.aurelia.let
+      push:
+        - meta_scope: meta.tag.other.html
+        - include: tag-end-maybe-self-closing
+        - include: au_attribute_let_tag
+        - include: tag-attributes
+
+  au_tag_template:
+    - match: '(<\/?)(\b(?ix:template)\b){{tag_name_break}}'
+      captures:
+        1: punctuation.definition.tag.begin.html
+        2: entity.name.tag.inline.form.html
+      push:
+        - meta_scope: meta.tag.inline.form.html
+        - include: tag-end-maybe-self-closing
+        - include: au_attribute_template_tag
+        - include: tag-attributes
+
+  au_tag_form:
+    - match: '(<\/?)({{html_forms_tags}})'
+      captures:
+        1: punctuation.definition.tag.begin.html
+        2: entity.name.tag.inline.form.html
+      push:
+        - meta_scope: meta.tag.inline.form.html
+        - include: tag-end-maybe-self-closing
+        - include: au_attribute_form_tag
+        - include: tag-attributes
+
+  au_tag_slot:
+    - match: '(<\/?)(\b(?ix:au-slot)\b){{tag_name_break}}'
+      captures:
+        1: punctuation.definition.tag.begin.html
+        2: entity.name.tag.other.aurelia.slot
+      push:
+        - meta_scope: meta.tag.other.html
+        - include: tag-end-maybe-self-closing
+        - include: au_attribute_slot_tag
+        - include: tag-attributes
+
+  au_tag_bindable:
+    - match: '(<\/?)(\b(?ix:bindable)\b){{tag_name_break}}'
+      captures:
+        1: punctuation.definition.tag.begin.html
+        2: entity.name.tag.other.aurelia.bindable
+      push:
+        - meta_scope: meta.tag.other.html
+        - include: tag-end-maybe-self-closing
+        - include: au_attribute_bindable_tag
+        - include: tag-attributes
+
+  au_tag_import:
+    - match: '(<\/?)(\b(?ix:import)\b){{tag_name_break}}'
+      captures:
+        1: punctuation.definition.tag.begin.html
+        2: entity.name.tag.other.aurelia.import
+      push:
+        - meta_scope: meta.tag.other.html
+        - include: tag-end-maybe-self-closing
+        - include: au_attribute_import_tag
+        - include: tag-attributes
+
+  au_tag_containerless:
+    - match: '(<)(\b(?ix:containerless)\b){{tag_name_break}}'
+      captures:
+        1: punctuation.definition.tag.begin.html
+        2: entity.name.tag.other.aurelia.containerless
+      push:
+        - include: tag-end
+        - include: tag-attributes
+
+  au_tag_capture:
+    - match: '(<)(\b(?ix:capture)\b){{tag_name_break}}'
+      captures:
+        1: punctuation.definition.tag.begin.html
+        2: entity.name.tag.other.aurelia.capture
+      push:
+        - include: tag-end
+        - include: tag-attributes
+
+  au_tag_compose:
+    - match: '(<\/?)(\b(?ix:au-compose)\b){{tag_name_break}}'
+      captures:
+        1: punctuation.definition.tag.begin.html
+        2: entity.name.tag.other.aurelia.compose
+      push:
+        - meta_scope: meta.tag.other.html
+        - include: tag-end-maybe-self-closing
+        - include: au_attribute_compose_tag
+        - include: tag-attributes
+
+  au_tag_a:
+    - match: '(<\/?)(\b(?ix:a)\b){{tag_name_break}}'
+      captures:
+        1: punctuation.definition.tag.begin.html
+        2: entity.name.tag.inline.a.html
+      push:
+        - meta_scope: meta.tag.inline.a.html
+        - include: tag-end-maybe-self-closing
+        - include: au_attribute_a_tag
+        - include: tag-attributes
+
+  au_tag_viewport:
+    - match: '(<\/?)(\b(?ix:au-viewport)\b){{tag_name_break}}'
+      captures:
+        1: punctuation.definition.tag.begin.html
+        2: entity.name.tag.other.aurelia.viewport
+      push:
+        - meta_scope: meta.tag.other.html
+        - include: tag-end-maybe-self-closing
+        - include: au_attribute_viewport_tag
+        - include: tag-attributes
+
+    # https://github.com/aurelia/aurelia/blob/master/packages/router/misc-notes.md?plain=1#L41
+    # (\b(?ix:au-viewport-scope)\b)
+
+  au_tag_validation:
+    - match: '(<\/?)(\b(?ix:validation-container)\b){{tag_name_break}}'
+      captures:
+        1: punctuation.definition.tag.begin.html
+        2: entity.name.tag.other.aurelia.validation
+      push:
+        - meta_scope: meta.tag.other.html
+        - include: tag-end-maybe-self-closing
+        - include: au_attribute_validation_tag
+        - include: tag-attributes
+
+  au_tag_dialog:
+    - match: '(<)(\b(?ix:au-dialog-container)\b){{tag_name_break}}'
+      captures:
+        1: punctuation.definition.tag.begin.html
+        2: entity.name.tag.other.aurelia.dialog-container
+      push:
+        - include: tag-end
+        - include: tag-attributes
+
+    - match: '(<)(\b(?ix:au-dialog-overlay)\b){{tag_name_break}}'
+      captures:
+        1: punctuation.definition.tag.begin.html
+        2: entity.name.tag.other.aurelia.dialog-overlay
+      push:
+        - include: tag-end
+        - include: tag-attributes
+
+  ###[ ATTRIBUTES ]###
+
+  tag-attributes:
+    - meta_prepend: true
+    - include: au_attribute_events
+    - include: au_attribute_reference
+    - include: au_attribute_promise
+    - include: au_attribute_class
+    - include: au_attribute_style
+    - include: au_attribute_conditional
+    - include: au_attribute_repeater
+    - include: au_attribute_attr
+    - include: au_attribute_slot
+    - include: au_attribute_portal
+    - include: au_attribute_validation
+    - include: au_attribute_i18n
+    - include: au_attribute_state
+    - include: au_attribute_binding
+
+  au_attribute_events:
+    - match: '{{attribute_name_start}}({{au_dom_event_attribute}})(\.)(\b(?ix:trigger|capture)\b){{attribute_name_break}}'
+      captures:
+        1: entity.other.attribute-name.event.html
+        2: punctuation.accessor
+        3: entity.other.attribute-name.aurelia.binding
+      push:
+        - tag-generic-attribute-meta
+        - tag-generic-attribute-assignment
+
+    # https://github.com/aurelia/aurelia/pull/1586
+    # ({{au_dom_event_attribute}})(\.)(\b(?ix:delegate)\b)
+
+  au_attribute_reference:
+    - match: '{{attribute_name_start}}(\b(?ix:ref)\b){{attribute_name_break}}'
+      captures:
+        1: entity.other.attribute-name.aurelia.binding
+      push:
+        - tag-generic-attribute-meta
+        - tag-generic-attribute-assignment
+
+    - match: '{{attribute_name_start}}(\b(?ix:element|view-model|custom-attribute|controller)\b)(\.)(\b(?ix:ref)\b){{attribute_name_break}}'
+      captures:
+        1: entity.other.attribute-name.aurelia.property
+        2: punctuation.accessor
+        3: entity.other.attribute-name.aurelia.binding
+      push:
+        - tag-generic-attribute-meta
+        - tag-generic-attribute-assignment
+
+  au_attribute_promise:
+    - match: '{{attribute_name_start}}(\b(?ix:promise)\b)(\.)({{au_binding_type}}){{attribute_name_break}}'
+      captures:
+        1: entity.other.attribute-name.aurelia.property
+        2: punctuation.accessor
+        3: entity.other.attribute-name.aurelia.binding
+      push:
+        - tag-generic-attribute-meta
+        - tag-generic-attribute-assignment
+
+  au_attribute_class:
+    - match: '{{attribute_name_start}}([a-zA-Z0-9\-]+)(\.)(\b(?ix:class)\b){{attribute_name_break}}'
+      captures:
+        1: meta.attribute-with-value.class.html meta.class-name.html
+        2: punctuation.accessor
+        3: meta.attribute-with-value.class.html entity.other.attribute-name.class.html
+      push:
+        - tag-generic-attribute-meta
+        - tag-generic-attribute-assignment
+
+    - match: '{{attribute_name_start}}(\b(?ix:class)\b)(\.)({{au_binding_type}}){{attribute_name_break}}'
+      captures:
+        1: meta.attribute-with-value.class.html entity.other.attribute-name.class.html
+        2: punctuation.accessor
+        3: entity.other.attribute-name.aurelia.binding
+      push:
+        - tag-generic-attribute-meta
+        - tag-generic-attribute-assignment
+
+  au_attribute_style:
+    - match: '{{attribute_name_start}}([a-zA-Z0-9\-]+)(\.)(\b(?ix:style)\b){{attribute_name_break}}'
+      captures:
+        1: meta.attribute-with-value.style.html source.css.embedded.html meta.property-name.css support.type.property-name.css
+        2: punctuation.accessor
+        3: meta.attribute-with-value.style.html entity.other.attribute-name.style.html
+      push:
+        - tag-generic-attribute-meta
+        - tag-generic-attribute-assignment
+
+    - match: '{{attribute_name_start}}(\b(?ix:style)\b)(\.)({{au_binding_type}}){{attribute_name_break}}'
+      captures:
+        1: meta.attribute-with-value.style.html entity.other.attribute-name.style.html
+        2: punctuation.accessor
+        3: entity.other.attribute-name.aurelia.binding
+      push:
+        - tag-generic-attribute-meta
+        - tag-generic-attribute-assignment
+
+    - match: '{{attribute_name_start}}(\b(?ix:style)\b){{attribute_name_break}}'
+      captures:
+        1: entity.other.attribute-name.style.html
+      push:
+        - tag-style-attribute-meta
+        # - tag-style-attribute-assignment
+        - au_attribute_style_assignment
+
+  au_attribute_style_assignment:
+    - meta_include_prototype: false
+
+    - match: =
+      scope: punctuation.separator.key-value.html
+      set: au_attribute_style_value
+    - include: else-pop
+
+  au_attribute_style_value:
+    - clear_scopes: true
+
+    - match: \"
+      scope: meta.string.html string.quoted.double.html punctuation.definition.string.begin.html
+      set: scope:source.css#rule-list-body
+      with_prototype:
+        - include: interpolation
+
+        - match: \"
+          scope: meta.string.html string.quoted.double.html punctuation.definition.string.end.html
+          pop: true
+
+    - match: \'
+      scope: meta.string.html string.quoted.single.html punctuation.definition.string.begin.html
+      set: scope:source.css#rule-list-body
+      with_prototype:
+        - include: interpolation
+
+        - match: \'
+          scope: meta.string.html string.quoted.single.html punctuation.definition.string.end.html
+          pop: true
+
+  au_attribute_conditional:
+    - match: '{{attribute_name_start}}(\b(?ix:if|else|case|default-case)\b){{attribute_name_break}}'
+      captures:
+        1: entity.other.attribute-name.aurelia.property
+      push:
+        - tag-generic-attribute-meta
+        - tag-generic-attribute-assignment
+
+    - match: '{{attribute_name_start}}(\b(?ix:if|show|hide|switch|case)\b)(\.)({{au_binding_type}}){{attribute_name_break}}'
+      captures:
+        1: entity.other.attribute-name.aurelia.property
+        2: punctuation.accessor
+        3: entity.other.attribute-name.aurelia.binding
+      push:
+        - tag-generic-attribute-meta
+        - tag-generic-attribute-assignment
+
+  au_attribute_repeater:
+    - match: '{{attribute_name_start}}(\b(?ix:repeat)\b)(\.)(\b(?ix:for)\b){{attribute_name_break}}'
+      captures:
+        1: entity.other.attribute-name.aurelia.property
+        2: punctuation.accessor
+        3: entity.other.attribute-name.aurelia.binding
+      push:
+        - tag-generic-attribute-meta
+        - tag-generic-attribute-assignment
+
+    # https://github.com/aurelia/aurelia/blob/master/packages/ui-virtualization/Note.md?plain=1#L35
+    # (\b(?ix:repeat|virtual-repeat)\b)(\.)(\b(?ix:for)\b)
+
+    # https://github.com/aurelia/aurelia/blob/master/packages/ui-virtualization/Note.md?plain=1#L85
+    # (\b(?ix:with)\b)(\.)({{au_binding_type}})
+
+  au_attribute_attr:
+    - match: '{{attribute_name_start}}([a-zA-Z0-9\-]+)(\.)(\b(?ix:attr)\b){{attribute_name_break}}'
+      captures:
+        1: entity.other.attribute-name.aurelia.property
+        2: punctuation.accessor
+        3: entity.other.attribute-name.aurelia.binding
+      push:
+        - tag-generic-attribute-meta
+        - tag-generic-attribute-assignment
+
+  au_attribute_slot:
+    - match: '{{attribute_name_start}}(\b(?ix:au-slot)\b){{attribute_name_break}}'
+      captures:
+        1: entity.other.attribute-name.aurelia.property
+      push:
+        - tag-generic-attribute-meta
+        - tag-generic-attribute-assignment
+
+  au_attribute_portal:
+    - match: '{{attribute_name_start}}(\b(?ix:portal)\b){{attribute_name_break}}'
+      captures:
+        1: entity.other.attribute-name.aurelia.property
+      push:
+        - tag-generic-attribute-meta
+        - tag-generic-attribute-assignment
+
+  au_attribute_validation:
+    - match: '{{attribute_name_start}}(\b(?ix:validation-errors)\b)(\.)(\b(?ix:from-view)\b){{attribute_name_break}}'
+      captures:
+        1: entity.other.attribute-name.aurelia.property
+        2: punctuation.accessor
+        3: entity.other.attribute-name.aurelia.binding
+      push:
+        - tag-generic-attribute-meta
+        - tag-generic-attribute-assignment
+
+  au_attribute_i18n:
+    - match: '{{attribute_name_start}}(\b(?ix:t)\b){{attribute_name_break}}'
+      captures:
+        1: entity.other.attribute-name.aurelia.property
+      push:
+        - tag-generic-attribute-meta
+        - tag-generic-attribute-assignment
+
+    - match: '{{attribute_name_start}}(\b(?ix:t|t-params)\b)(\.)({{au_binding_type}}){{attribute_name_break}}'
+      captures:
+        1: entity.other.attribute-name.aurelia.property
+        2: punctuation.accessor
+        3: entity.other.attribute-name.aurelia.binding
+      push:
+        - tag-generic-attribute-meta
+        - tag-generic-attribute-assignment
+
+  au_attribute_state:
+    - match: '{{attribute_name_start}}([a-zA-Z0-9\-]+)(\.)(\b(?ix:state)\b){{attribute_name_break}}'
+      captures:
+        1: entity.other.attribute-name.aurelia.property
+        2: punctuation.accessor
+        3: entity.other.attribute-name.aurelia.binding
+      push:
+        - tag-generic-attribute-meta
+        - tag-generic-attribute-assignment
+
+    - match: '{{attribute_name_start}}({{au_dom_event_attribute}})(\.)(\b(?ix:dispatch)\b){{attribute_name_break}}'
+      captures:
+        1: entity.other.attribute-name.event.html
+        2: punctuation.accessor
+        3: entity.other.attribute-name.aurelia.binding
+      push:
+        - tag-generic-attribute-meta
+        - tag-generic-attribute-assignment
+
+  au_attribute_binding:
+    - match: '{{attribute_name_start}}(\.\.\.)(\$)(\b(?ix:attr)\b){{attribute_name_break}}'
+      captures:
+        1: keyword.operator.spread.js
+        2: entity.other.attribute-name.aurelia.binding
+        3: entity.other.attribute-name.aurelia.binding
+      push:
+        - tag-generic-attribute-meta
+        - tag-generic-attribute-assignment
+
+    - match: '{{attribute_name_start}}([a-zA-Z0-9\-]+)?(\.)?([a-zA-Z0-9\-]+)(\.)({{au_binding_type}}){{attribute_name_break}}'
+      captures:
+        1: entity.other.attribute-name.aurelia.property
+        2: punctuation.accessor
+        3: entity.other.attribute-name.aurelia.property
+        4: punctuation.accessor
+        5: entity.other.attribute-name.aurelia.binding
+      push:
+        - tag-generic-attribute-meta
+        - tag-generic-attribute-assignment
+
+  ###[ TAG ATTRIBUTES ]###
+
+  au_attribute_let_tag:
+    - match: '{{attribute_name_start}}(\b(?ix:to-binding-context)\b){{attribute_name_break}}'
+      captures:
+        1: entity.other.attribute-name.aurelia.property
+      push:
+        - tag-generic-attribute-meta
+        - tag-generic-attribute-assignment
+
+  au_attribute_template_tag:
+    - match: '{{attribute_name_start}}(\b(?ix:pending|then|catch|as-custom-element)\b){{attribute_name_break}}'
+      captures:
+        1: entity.other.attribute-name.aurelia.property
+      push:
+        - tag-generic-attribute-meta
+        - tag-generic-attribute-assignment
+
+    - match: '{{attribute_name_start}}(\b(?ix:then|catch)\b)(\.)(\b(?ix:from-view)\b){{attribute_name_break}}'
+      captures:
+        1: entity.other.attribute-name.aurelia.property
+        2: punctuation.accessor
+        3: entity.other.attribute-name.aurelia.binding
+      push:
+        - tag-generic-attribute-meta
+        - tag-generic-attribute-assignment
+
+  au_attribute_form_tag:
+    - match: '{{attribute_name_start}}(\b(?ix:model|matcher)\b)(\.)({{au_binding_type}}){{attribute_name_break}}'
+      captures:
+        1: entity.other.attribute-name.aurelia.property
+        2: punctuation.accessor
+        3: entity.other.attribute-name.aurelia.binding
+      push:
+        - tag-generic-attribute-meta
+        - tag-generic-attribute-assignment
+
+  au_attribute_slot_tag:
+    - match: '{{attribute_name_start}}(\b(?ix:name)\b){{attribute_name_break}}'
+      captures:
+        1: entity.other.attribute-name.html
+      push:
+        - tag-generic-attribute-meta
+        - tag-generic-attribute-assignment
+
+    - match: '{{attribute_name_start}}(\b(?ix:expose)\b)(\.)({{au_binding_type}}){{attribute_name_break}}'
+      captures:
+        1: entity.other.attribute-name.aurelia.property
+        2: punctuation.accessor
+        3: entity.other.attribute-name.aurelia.binding
+      push:
+        - tag-generic-attribute-meta
+        - tag-generic-attribute-assignment
+
+  au_attribute_bindable_tag:
+    - match: '{{attribute_name_start}}(\b(?ix:property|mode|attribute)\b){{attribute_name_break}}'
+      captures:
+        1: entity.other.attribute-name.aurelia.property
+      push:
+        - tag-generic-attribute-meta
+        - tag-generic-attribute-assignment
+
+  au_attribute_import_tag:
+    - match: '{{attribute_name_start}}(\b(?ix:from)\b){{attribute_name_break}}'
+      captures:
+        1: entity.other.attribute-name.aurelia.property
+      push:
+        - tag-generic-attribute-meta
+        - tag-generic-attribute-assignment
+
+  au_attribute_compose_tag:
+    - match: '{{attribute_name_start}}(\b(?ix:template|scope-behavior)\b){{attribute_name_break}}'
+      captures:
+        1: entity.other.attribute-name.aurelia.property
+      push:
+        - tag-generic-attribute-meta
+        - tag-generic-attribute-assignment
+
+    - match: '{{attribute_name_start}}(\b(?ix:component|template|model)\b)(\.)({{au_binding_type}}){{attribute_name_break}}'
+      captures:
+        1: entity.other.attribute-name.aurelia.property
+        2: punctuation.accessor
+        3: entity.other.attribute-name.aurelia.binding
+      push:
+        - tag-generic-attribute-meta
+        - tag-generic-attribute-assignment
+
+    - match: '{{attribute_name_start}}(\b(?ix:view-model)\b)(\.)(\b(?ix:ref)\b){{attribute_name_break}}'
+      captures:
+        1: entity.other.attribute-name.aurelia.property
+        2: punctuation.accessor
+        3: entity.other.attribute-name.aurelia.binding
+      push:
+        - tag-generic-attribute-meta
+        - tag-generic-attribute-assignment
+
+  au_attribute_a_tag:
+    - match: '{{attribute_name_start}}(\b(?ix:load|external)\b){{attribute_name_break}}'
+      captures:
+        1: entity.other.attribute-name.aurelia.property
+      push:
+        - tag-generic-attribute-meta
+        - tag-generic-attribute-assignment
+
+  au_attribute_viewport_tag:
+    - match: '{{attribute_name_start}}(\b(?ix:no-scope|name|default|fallback|used-by)\b){{attribute_name_break}}'
+      captures:
+        1: entity.other.attribute-name.aurelia.property
+      push:
+        - tag-generic-attribute-meta
+        - tag-generic-attribute-assignment
+
+    - match: '{{attribute_name_start}}(\b(?ix:default|fallback)\b)(\.)({{au_binding_type}}){{attribute_name_break}}'
+      captures:
+        1: entity.other.attribute-name.aurelia.property
+        2: punctuation.accessor
+        3: entity.other.attribute-name.aurelia.binding
+      push:
+        - tag-generic-attribute-meta
+        - tag-generic-attribute-assignment
+
+    # https://github.com/aurelia/aurelia/blob/master/docs/user-docs/router-lite/viewports.md?plain=1#L534
+    # (\b(?ix:fallback)\b)(\.)({{au_binding_type}})
+
+    # https://github.com/aurelia/aurelia/blob/master/packages/router/misc-notes.md?plain=1#L41
+    # (\b(?ix:catches)\b)
+
+  au_attribute_validation_tag:
+    - match: '{{attribute_name_start}}(\b(?ix:errors)\b)(\.)(\b(?ix:from-view)\b){{attribute_name_break}}'
+      captures:
+        1: entity.other.attribute-name.aurelia.property
+        2: punctuation.accessor
+        3: entity.other.attribute-name.aurelia.binding
+      push:
+        - tag-generic-attribute-meta
+        - tag-generic-attribute-assignment
