@@ -1,0 +1,214 @@
+%YAML 1.2
+---
+name: Aurelia JavaScript v2
+scope: source.js.aurelia.v2
+version: 2
+extends: Packages/JavaScript/JavaScript.sublime-syntax
+file_extensions: [js,cjs,mjs]
+
+# variables:
+#   au_quotes: (?:\'[^\']*\')|(?:\"[^\"]*\")|(?:\`[^\`]*\`)
+
+contexts:
+  main:
+    - meta_prepend: true
+
+  decorator:
+    - match: '@(?=customElement)'
+      scope: punctuation.definition.annotation.js
+      push:
+        - decorator-meta
+        - decorator-expression-end
+        # - decorator-expression-begin
+        - decorator-expression-begin-au
+
+    - match: '@'
+      scope: punctuation.definition.annotation.js
+      push:
+        - decorator-meta
+        - decorator-expression-end
+        - decorator-expression-begin
+
+  decorator-expression-begin-au:
+    - include: decorator-name
+    - include: parenthesized-expression
+    - include: expression-begin-au
+
+  expression-begin-au:
+    - match: (?=customElement)
+      scope: meta.function-call.js
+      set:
+        - function-call-arguments-au
+        - literal-variable
+
+    - include: literal-string
+    - include: literal-string-template
+
+    - include: literal-number
+    - include: prefix-operators
+
+    # - include: object-literal
+    - include: object-literal-au
+
+    - include: array-literal
+
+    - include: else-pop
+
+  function-call-arguments-au:
+    - match: \(
+      scope: punctuation.section.group.begin.js
+      set:
+        - meta_scope: meta.group.js
+
+        - match: \)
+          scope: punctuation.section.group.end.js
+          pop: true
+
+        - include: expression-list-au
+
+  expression-list-au:
+    - include: expression-break
+    - include: comma-separator
+
+    - match: (?=\S)
+      push: expression-no-comma-au
+
+  expression-no-comma-au:
+    - meta_include_prototype: false
+
+    - match: ''
+      set:
+        - expression-end-no-comma
+        - expression-begin-au
+
+  object-literal-au:
+    - match: '\{'
+      scope: punctuation.section.mapping.begin.js
+      # set: object-literal-contents
+      set: object-literal-contents-au
+
+  object-literal-contents-au:
+    - meta_scope: meta.mapping.js
+
+    - match: '\}'
+      scope: punctuation.section.mapping.end.js
+      pop: 1
+
+    - match: \.\.\.
+      scope: keyword.operator.spread.js
+      push: expression-no-comma
+
+    - match: >-
+        (?x)(?=
+          {{property_name}}\s*:\s*
+          {{either_func_lookahead}}
+        )
+      push:
+        - object-literal-meta-key
+        - method-name
+
+    - match: (?=\*)
+      push: method-declaration
+
+    - match: (?={{property_name}})
+      # push: object-literal-element
+      push: object-literal-element-au
+
+    - include: comma-separator
+
+    - match: ':'
+      scope: punctuation.separator.key-value.js
+      push: expression-no-comma
+
+    # If there's any garbage, parse it as an expression
+    # so that close braces won't break things.
+    - match: (?=\S)
+      push: expression-no-comma
+
+  object-literal-element-au:
+    - match: '{{identifier_name}}(?=\s*(?:[},]|$|//|/\*))'
+      scope: variable.other.readwrite.js
+      pop: 1
+
+    - match: (?=\S)
+      pop: 1
+      branch_point: object-literal-property-au
+      branch:
+        - object-literal-property-au
+        - method-declaration
+
+  object-literal-property-au:
+    - match: ''
+      set:
+        - object-literal-property-check-au
+        - object-literal-meta-key
+        - object-property-name-au
+
+  object-literal-property-check-au:
+    - match: (?=\()
+      fail: object-literal-property-au
+    - include: else-pop
+
+  object-property-name-au:
+    - match: '\btemplate\b(?=\s*\:)'
+      pop: 2
+      set:
+      - match: ':'
+        scope: punctuation.separator.key-value.js
+        pop: 2
+        set:
+          - include: literal-string-au
+          - include: literal-string-template-au
+
+          - include: literal-number
+          - include: prefix-operators
+
+          - include: else-pop
+
+      - include: else-pop
+
+    - include: computed-property-name
+    - include: literal-string
+    - include: literal-number
+
+    - match: '{{identifier_name}}'
+      pop: 1
+
+    - include: else-pop
+
+  literal-string-au:
+    - include: literal-double-quoted-string-au
+    - include: literal-single-quoted-string-au
+
+  literal-double-quoted-string-au:
+    - clear_scopes: true
+
+    - match: \"
+      scope: punctuation.definition.string.begin.js
+      embed: scope:text.html.aurelia.v2
+      embed_scope: text.html.aurelia.v2
+      escape: \"
+      escape_captures:
+        0: punctuation.definition.string.end.js
+
+  literal-single-quoted-string-au:
+    - clear_scopes: true
+
+    - match: \'
+      scope: punctuation.definition.string.begin.js
+      embed: scope:text.html.aurelia.v2
+      embed_scope: text.html.aurelia.v2
+      escape: \'
+      escape_captures:
+        0: punctuation.definition.string.end.js
+
+  literal-string-template-au:
+    - clear_scopes: true
+
+    - match: \`
+      scope: punctuation.definition.string.begin.js
+      embed: scope:text.html.aurelia.v2
+      embed_scope: text.html.aurelia.v2
+      escape: \`
+      escape_captures:
+        0: punctuation.definition.string.end.js
